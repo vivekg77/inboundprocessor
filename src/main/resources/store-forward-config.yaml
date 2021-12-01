@@ -1,0 +1,8 @@
+exceptionHandler:
+# Service Name (Referrer) here
+  sepa-inbound-processor:
+      exceptions:
+        T24_SEPA_PAYMENT_EXCEPTION:
+          exceptionCode: T24API001
+          exceptionMessage: T24 Sepa Payment API failed.
+          retryEligible: true

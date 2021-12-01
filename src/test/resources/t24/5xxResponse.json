@@ -1,0 +1,35 @@
+{
+  "header": {
+    "id": "string",
+    "status": "string",
+    "transactionStatus": "string",
+    "audit": {
+      "T24_time": 0,
+      "versionNumber": "string",
+      "parse_time": 0
+    }
+  },
+  "error": {
+    "errorDetails": [
+      {
+        "fieldName": "string",
+        "code": "string",
+        "message": "string"
+      }
+    ],
+    "type": "string"
+  },
+  "override": {
+    "overrideDetails": [
+      {
+        "id": "string",
+        "description": "string",
+        "code": "string",
+        "options": [
+          "string"
+        ],
+        "type": "string"
+      }
+    ]
+  }
+}

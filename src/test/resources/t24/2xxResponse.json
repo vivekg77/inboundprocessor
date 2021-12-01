@@ -1,0 +1,15 @@
+{
+  "header": {
+    "id": "string",
+    "status": "string",
+    "transactionStatus": "string",
+    "audit": {
+      "T24_time": 0,
+      "versionNumber": "string",
+      "parse_time": 0
+    }
+  },
+  "body": {
+    "inMsg": "string"
+  }
+}

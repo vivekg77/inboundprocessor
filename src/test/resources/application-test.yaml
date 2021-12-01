@@ -1,0 +1,22 @@
+spring:
+  kafka:
+    bootstrap-servers: ${spring.embedded.kafka.brokers}
+    properties:
+      schema.registry.url: not-used
+  cloud:
+    stream:
+      function:
+        definition: paymentsSepaInboundProcess
+      bindings:
+        paymentsSepaInboundProcess-in-0:
+          destination: dev.private.payments.sepa.inbound.request # SEPA Inbound Request Topic
+        paymentsSepaInboundProcess-in-1:
+          destination: dev.private.payments.sepa.inbound.release # SEPA Inbound Release Topic
+        paymentsSepaInboundProcess-in-2:
+          destination: dev.private.payments.sepa.inbound.processed # SEPA Inbound Payment Processed Topic
+        paymentsSepaInboundProcess-out-0:
+          destination: dev.private.payments.sepa.inbound.processed # SEPA Inbound Payment Processed Topic
+      kafka:
+        streams:
+          binder:
+            brokers: ${spring.embedded.kafka.brokers}

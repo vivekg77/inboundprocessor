@@ -1,0 +1,77 @@
+store:
+  forward:
+    config: '/store-forward-config.yaml'
+
+spring:
+  application:
+    name: payments-sepa-inbound-processor
+    main:
+      allow-bean-definition-overriding: true
+  kafka:
+    properties:
+      bootstrap.servers: ${bootstrap-servers:192.168.1.254:31090}
+      schema.registry.url: ${schema.registry.url:http://192.168.1.254:31081}
+      replay: ${output-replay-topic:private.payments.sepa.inbound.replay.dev}
+
+  cloud:
+    stream:
+      function:
+        definition: paymentsSepaInboundProcess
+      bindings:
+        paymentsSepaInboundProcess-in-0:
+          destination: ${input-topic-0:private.payments.sepa.inbound.release.dev}
+        paymentsSepaInboundProcess-in-1:
+          destination: ${input-topic-1:private.payments.sepa.inbound.processed.dev}
+        paymentsSepaInboundProcess-in-2:
+          destination: ${input-topic-2:private.payments.sepa.inbound.request.dev}
+        paymentsSepaInboundProcess-out-0:
+          destination: ${output-topic-2:private.payments.sepa.inbound.processed.dev}
+
+      kafka:
+        streams:
+          binder:
+            functions:
+              paymentsSepaInboundProcess:
+                applicationId:  paymentsSepaInboundProcessApp
+            configuration:
+              default:
+                key:
+                  serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                value:
+                  serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+            deserializationExceptionHandler: ${exception-handler:logAndContinue}
+          bindings:
+            paymentsSepaInboundProcess-in-0:
+              consumer:
+                startOffset: latest
+                concurrency: ${num-of-stream-threads:2}
+
+        properties:
+        binder:
+          brokers: ${bootstrap-servers:192.168.1.254:31090}
+
+  t24:
+    api:
+      url: ${t24url:http://localhost:8080/api/v1.0.0/order/sepaPayment}
+kafka:
+  payments:
+    sepa:
+      inbound:
+        monitoring:
+          topic: dev.private.payments.sepa.inbound.monitoring
+        request:
+          topic: dev.private.payments.sepa.inbound.request
+        error:
+          topic: dev.private.payments.sepa.inbound.error
+
+logging:
+#  file.name: ${inbound-log-name:payments-sepa-inbound-processor.log}
+  pattern:
+    console: '%d{MM-dd-yyyy HH:mm:ss} UUID:%X{uuid} [%thread] %-4r %-5level %logger{50} - %msg%n'
+    file: '%d{MM-dd-yyyy HH:mm:ss} UUID:%X{uuid} [%thread] %-4r %-5level %logger{50} - %msg%n'
+  level:
+    root: INFO
+    org.apache.kafka: INFO
+    com.metrobank.payments: ERROR
+server:
+  port: 8094
